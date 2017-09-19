@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<meta charset="UTF-8">
+	<title>APP</title>
+    <script src="/jquery-1.8.3.js"></script>
+    <script src="/index.js"></script>
+</head>
+<body>
+
+    <form method='post' action='/upload' enctype="multipart/form-data">
+	    <input type='file' name='fileUploaded'>
+	    <input type='submit'>
+
+	</form>
+
+  	<div  id="user_submit">
+		<input type="text" placeholder="user_name" name="user_name"><br>
+		<input type="text" placeholder="phone_no" name="phone_no"><br>
+		<input type="text" placeholder="email" name="email"><br>
+		<input type="text" placeholder="address" name="address"><br>
+		<input type="text" placeholder="DOB" name="DOB"><br>
+		<button type="submit" id="submit_btn">Submit</button>
+  	</div>
+	<table id="table">
+	    <tr>
+	        <th>user_name</th>
+	        <th>phone_no</th>
+	        <th>email</th>
+	        <th>address</th>
+	        <th>DOB</th>	  
+
+	    </tr>
+	    
+	</table>
+        
+
+
+  	<script type="text/javascript">
+  	$(document).ready(function(){
+
+
+		$.ajax({
+			url: '/get-results',
+			method:"post",
+			cache:false,
+			dataType:'json',
+			data: {  },
+			success: function (response) {
+			    console.log(response); 
+			    drawTable(response);
+				
+			}
+		});
+
+		$( "#submit_btn" ).click(function( event ) {
+			
+			var $form = $( "#user_submit" )
+			var user_name = $form.find( "input[name='user_name']" ).val()
+			var phone_no = $form.find( "input[name='phone_no']" ).val()
+			var email = $form.find( "input[name='email']" ).val()
+			var address = $form.find( "input[name='address']" ).val()
+			var DOB = $form.find( "input[name='DOB']" ).val()
+
+			url = "/user_info";
+
+			$.ajax({
+				url: url,
+				method:"post",
+				cache:false,
+				dataType:'json',
+				data: { user_name: user_name, phone_no:phone_no, email:email ,address:address ,DOB:DOB },
+				success: function (response) {
+				    console.log(response); 
+				    drawTable(response);
+					
+				}
+			});
+
+		});
+
+
+		function drawTable(data) {
+			$("#table").empty()
+			var row = $("<tr />")
+			$("#table").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
+			row.append($("<th>" + "user_name" + "</th>"));
+			row.append($("<th>" + "phone_no" + "</th>"));
+			row.append($("<th>" + "email" + "</th>"));
+			row.append($("<th>" + "address" + "</th>"));
+			row.append($("<th>" + "DOB" + "</th>"));
+			row.append($("<th>" + "EDIT" + "</th>"));
+			row.append($("<th>" + "DELTE" + "</th>"));
+
+			for (var i = 0; i < data.length; i++) {
+				drawRow(data[i]);
+			}
+		}
+
+		function drawRow(rowData) {
+			var row = $("<tr />")
+			$("#table").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
+			row.append($("<td>" + rowData.user_name + "</td>"));
+			row.append($("<td>" + rowData.phone_no + "</td>"));
+			row.append($("<td>" + rowData.email + "</td>"));
+			row.append($("<td>" + rowData.address + "</td>"));
+			row.append($("<td>" + rowData.DOB + "</td>"));
+			row.append($("<td>" + "<button class='edit_btn' id="+rowData._id+">EDIT</button>" + "</td>"));
+			row.append($("<td>" + "<button class='del_btn' id="+rowData._id+">DELETE</button>" + "</td>"));
+
+		}
+
+		$(document).on('click', ".edit_btn", function() { 
+			url = "/edit";
+			$.ajax({
+				url: url,
+				method:"post",
+				cache:false,
+				dataType:'json',
+				data: { _id:$(this).attr('id') },
+				success: function (response) {
+				    console.log("edit",response); 
+					
+				}
+			});
+		});
+
+		$(document).on('click', ".del_btn", function() { 
+			url = "/delete";
+			$.ajax({
+				url: url,
+				method:"post",
+				cache:false,
+				dataType:'json',
+				data: { _id:$(this).attr('id') },
+				success: function (response) {
+				    console.log(response); 
+				    drawTable(response);
+					
+				}
+			});
+		});
+
+
+	});
+  	</script>
+  	<style type="text/css">
+        table, th, td 
+        {
+            margin:10px 0;
+            border:solid 1px #333;
+            padding:2px 4px;
+            font:15px Verdana;
+        }
+        th {
+            font-weight:bold;
+        }
+
+  	</style>
+
+</body>
+</html>

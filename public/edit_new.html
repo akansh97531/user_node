@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html >
+<head>
+	<meta charset="UTF-8">
+	<title>APP</title>
+    <script src="/jquery-1.8.3.js"></script>
+    <script src="/index.js"></script>
+</head>
+<body>
+
+
+
+  	<div  id="user_submit">
+		<input type="text" placeholder="user_name" name="user_name"><br>
+		<input type="text" placeholder="phone_no" name="phone_no"><br>
+		<input type="text" placeholder="email" name="email"><br>
+		<input type="text" placeholder="address" name="address"><br>
+		<input type="text" placeholder="DOB" name="DOB"><br>
+		<button type="submit" id="edit_btn">edit</button>
+  	</div>
+        
+
+  	<script type="text/javascript">
+  	$(document).ready(function(){
+		$(document).on('click', "#edit_btn", function() { 
+
+			var $form = $( "#user_submit" )
+			var user_name = $form.find( "input[name='user_name']" ).val()
+			var phone_no = $form.find( "input[name='phone_no']" ).val()
+			var email = $form.find( "input[name='email']" ).val()
+			var address = $form.find( "input[name='address']" ).val()
+			var DOB = $form.find( "input[name='DOB']" ).val()
+
+			url = "/edit_new";
+
+			$.ajax({
+				url: url,
+				method:"post",
+				cache:false,
+				dataType:'json',
+				data: { user_name: user_name, phone_no:phone_no, email:email ,address:address ,DOB:DOB },
+				success: function (response) {
+				    console.log(response); 
+				    drawTable(response);
+					
+				}
+			});
+
+		});
+
+
+
+	});
+  	</script>
+
+</body>
+</html>
